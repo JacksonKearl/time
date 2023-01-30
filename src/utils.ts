@@ -72,18 +72,29 @@ export const MappedView =
 	}
 
 export class LocalStorageState<V> implements Disposable {
-	public value: V
+	private _value: V
+	private timeout: number | undefined
+
+	public get value(): V {
+		return this._value
+	}
+	public set value(value: V) {
+		this._value = value
+		clearTimeout(this.timeout)
+		this.timeout = setTimeout(() => this.flush(), 1000)
+	}
+
 	constructor(
 		private id: string,
 		defaultValue: V,
 		private serializer: (v: V) => string = JSON.stringify,
 		deserializer: (s: string) => V = JSON.parse,
 	) {
-		this.value = defaultValue
+		this._value = defaultValue
 		const prior = localStorage.getItem(id)
 		if (prior) {
 			try {
-				this.value = deserializer(prior)
+				this._value = deserializer(prior)
 			} catch (e) {
 				console.error(
 					'Error deserializing key',
@@ -98,8 +109,13 @@ export class LocalStorageState<V> implements Disposable {
 		}
 	}
 
-	dispose(): void {
+	private flush() {
 		localStorage.setItem(this.id, this.serializer(this.value))
+	}
+
+	dispose(): void {
+		this.flush()
+		clearTimeout(this.timeout)
 	}
 }
 

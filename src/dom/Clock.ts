@@ -110,7 +110,7 @@ export class Clock extends CanvasElement {
 		const currentTime = new Date()
 		if (this.options.fMax > 1 / 20) {
 			const exact = currentTime.getMilliseconds()
-			const batching = 1000 / this.options.fMax
+			const batching = 1000 * this.options.fMax
 			currentTime.setMilliseconds(Math.floor(exact / batching) * batching)
 		}
 		const timezoneOffset = this.options.offset * 60 * 1000

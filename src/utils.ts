@@ -91,6 +91,8 @@ export class LocalStorageState<V> implements Disposable {
 					'from local storage data ',
 					prior,
 					e,
+					'falling back to default:',
+					defaultValue,
 				)
 			}
 		}

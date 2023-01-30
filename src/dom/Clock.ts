@@ -82,9 +82,10 @@ export class Clock extends CanvasElement {
 	// reads: timeRate, refreshTimeout
 	private resetAutoAdvanceTimer() {
 		this.autoAdvanceDisposables.clear()
-		const timeout = this.options.renderSecondHand
-			? this.options.fMax
-			: Math.min(1 / 10, this.options.fMax)
+		const timeout =
+			(this.options.renderSecondHand
+				? this.options.fMax
+				: Math.min(1 / 10, this.options.fMax)) * 1000
 
 		const onFrame = () => {
 			this.render()
@@ -108,10 +109,8 @@ export class Clock extends CanvasElement {
 		this.context.save()
 
 		const currentTime = new Date()
-		if (this.options.fMax > 1 / 20) {
-			const exact = currentTime.getMilliseconds()
-			const batching = 1000 * this.options.fMax
-			currentTime.setMilliseconds(Math.floor(exact / batching) * batching)
+		if (this.options.fMax === 1) {
+			currentTime.setMilliseconds(0)
 		}
 		const timezoneOffset = this.options.offset * 60 * 1000
 		const timeToShow = +currentTime - timezoneOffset
